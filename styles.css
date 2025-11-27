@@ -1,8 +1,49 @@
-/*
+/* === 🌈 Rainbow Link CSS === */
 
-This CSS file will be included with your plugin, and
-available in the app when your plugin is enabled.
+/* 1. 🔴 Red */
+.markdown-source-view.mod-cm6 .cm-content a.internal-link[data-href*="#red"],
+a.internal-link[href*="#red"] {
+    color: #e74c3c !important;
+    background-color: rgba(231, 76, 60, 0.15) !important;
+    border-bottom: 2px solid #e74c3c !important;
+    text-decoration: none !important;
+    padding: 0 4px;
+    border-radius: 4px;
+    font-weight: 800 !important;
+}
 
-If your plugin does not need CSS, delete this file.
+/* 2. 🟢 Green */
+.markdown-source-view.mod-cm6 .cm-content a.internal-link[data-href*="#green"],
+a.internal-link[href*="#green"] {
+    color: #27ae60 !important;
+    background-color: rgba(39, 174, 96, 0.15) !important;
+    border-bottom: 2px solid #27ae60 !important;
+    text-decoration: none !important;
+    padding: 0 4px;
+    border-radius: 4px;
+    font-weight: 800 !important;
+}
 
-*/
+/* 3. 🔵 Blue */
+.markdown-source-view.mod-cm6 .cm-content a.internal-link[data-href*="#blue"],
+a.internal-link[href*="#blue"] {
+    color: #2980b9 !important;
+    background-color: rgba(41, 128, 185, 0.15) !important;
+    border-bottom: 2px solid #2980b9 !important;
+    text-decoration: none !important;
+    padding: 0 4px;
+    border-radius: 4px;
+    font-weight: 800 !important;
+}
+
+/* 4. 🟡 Highlight (Yellow) */
+.markdown-source-view.mod-cm6 .cm-content a.internal-link[data-href*="#high"],
+a.internal-link[href*="#high"] {
+    color: #d35400 !important;
+    background-color: #f1c40f !important;
+    box-shadow: 0 0 5px rgba(241, 196, 15, 0.6);
+    padding: 1px 6px;
+    border-radius: 8px;
+    font-weight: 900 !important;
+    text-decoration: none !important;
+}
