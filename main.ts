@@ -2,47 +2,40 @@ import { Plugin, MarkdownView, Notice } from 'obsidian';
 
 export default class RainbowLinkPlugin extends Plugin {
 
-    // 修复 [1]: 去掉了 async
     onload() {
-        // 修复 [2]: 去掉了 console.log
-
-        // 修复 [3]: 使用句子大小写 (Sentence case)
+        // 1. 注册命令
+        // 改动：Colorize: red -> Colorize link red (更符合句子习惯)
         this.addCommand({
             id: 'set-link-red',
-            name: 'Colorize: red 🔴', // Set Link Red -> Colorize: red
+            name: 'Colorize link red 🔴',
             callback: () => this.executeRainbow('red')
         });
 
         this.addCommand({
             id: 'set-link-green',
-            name: 'Colorize: green 🟢',
+            name: 'Colorize link green 🟢',
             callback: () => this.executeRainbow('green')
         });
 
         this.addCommand({
             id: 'set-link-blue',
-            name: 'Colorize: blue 🔵',
+            name: 'Colorize link blue 🔵',
             callback: () => this.executeRainbow('blue')
         });
 
         this.addCommand({
             id: 'set-link-high',
-            name: 'Colorize: highlight 🟡',
+            name: 'Colorize link highlight 🟡',
             callback: () => this.executeRainbow('high')
         });
     }
 
     async executeRainbow(colorTag: string) {
         let mode = "none";
-        // 修复 [4]: 去掉了 any，指定了具体类型
         let targetObj: HTMLInputElement | HTMLTextAreaElement | HTMLElement | null = null;
         let selectionText = "";
 
-        // ---------------------------------------------------------
         // 1. 侦探阶段
-        // ---------------------------------------------------------
-
-        // 修复 [5]: activeLeaf 已弃用，改用 getActiveViewOfType
         const view = this.app.workspace.getActiveViewOfType(MarkdownView);
         const editor = view?.editor;
         
@@ -51,10 +44,8 @@ export default class RainbowLinkPlugin extends Plugin {
             selectionText = editor.getSelection();
         }
 
-        // B. 看板输入框模式
         if (mode === "none") {
             const activeEl = document.activeElement;
-            // 修复 [6]: 移除了不必要的断言，直接检查 instance
             if (activeEl instanceof HTMLInputElement || activeEl instanceof HTMLTextAreaElement) {
                 if (activeEl.value) {
                     const start = activeEl.selectionStart;
@@ -68,7 +59,6 @@ export default class RainbowLinkPlugin extends Plugin {
             }
         }
 
-        // C. 悬停模式
         if (mode === "none") {
             const hoverEl = document.querySelector('a.internal-link:hover');
             if (hoverEl instanceof HTMLElement) {
@@ -83,14 +73,12 @@ export default class RainbowLinkPlugin extends Plugin {
         }
 
         if (mode === "none") {
-            new Notice("⚠️ No selection found!\nPlease select text OR hover over a link.");
+            // 🔴 关键修复在这里：把 OR 改成了 or
+            new Notice("⚠️ No selection found!\nPlease select text or hover over a link.");
             return;
         }
 
-        // ---------------------------------------------------------
         // 2. 加工阶段
-        // ---------------------------------------------------------
-        
         let linkTarget = selectionText;
         let alias = selectionText;
 
@@ -109,16 +97,11 @@ export default class RainbowLinkPlugin extends Plugin {
         linkTarget = linkTarget.replace(/#(red|green|blue|high)/g, "");
         const newLink = `[[${linkTarget}#${colorTag}|${alias}]]`;
 
-        // ---------------------------------------------------------
         // 3. 执行阶段
-        // ---------------------------------------------------------
-
         if (mode === "editor" && editor) {
             editor.replaceSelection(newLink);
 
         } else if (mode === "input" && targetObj) {
-            // 修复 [7]: execCommand 已弃用，改用原生值替换
-            // 这是一个针对 Kanban 输入框的兼容性写法
             const inputEl = targetObj as HTMLInputElement; 
             inputEl.focus();
             
@@ -126,14 +109,9 @@ export default class RainbowLinkPlugin extends Plugin {
             const end = inputEl.selectionEnd || 0;
             const originalText = inputEl.value;
 
-            // 手动拼接新字符串
             inputEl.value = originalText.substring(0, start) + newLink + originalText.substring(end);
-
-            // 恢复光标位置
             inputEl.selectionStart = start + newLink.length;
             inputEl.selectionEnd = start + newLink.length;
-
-            // 关键：手动触发 Input 事件，通知 Obsidian 保存更改
             inputEl.dispatchEvent(new Event('input', { bubbles: true }));
 
         } else if (mode === "hover") {
